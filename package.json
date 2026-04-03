@@ -2,7 +2,7 @@
   "name": "ccc-ninja",
   "displayName": "Claude Code Copier Ninja",
   "description": "Parse, format, and copy Claude Code conversation transcripts with one click.",
-  "version": "0.1.0",
+  "version": "0.4.0",
   "publisher": "scottconfusedgorilla",
   "license": "MIT",
   "repository": {
@@ -42,6 +42,18 @@
       {
         "command": "cccNinja.saveAsText",
         "title": "CCC Ninja: Save as Text"
+      },
+      {
+        "command": "cccNinja.saveAsHtml",
+        "title": "CCC Ninja: Save as HTML"
+      },
+      {
+        "command": "cccNinja.previewHtml",
+        "title": "CCC Ninja: Visual Preview"
+      },
+      {
+        "command": "cccNinja.copyThisSession",
+        "title": "CCC Ninja: Copy This Session"
       }
     ],
     "menus": {
