@@ -231,6 +231,10 @@ function escapeAndFormat(s: string): string {
 
   // Line breaks (but not inside pre blocks)
   html = html.replace(/\n/g, "<br>");
+  // Collapse 3+ consecutive <br> to 2
+  html = html.replace(/(<br>){3,}/g, "<br><br>");
+  // Strip leading/trailing <br>
+  html = html.replace(/^(<br>)+/, "").replace(/(<br>)+$/, "");
   html = html.replace(/<pre([^>]*)>([\s\S]*?)<\/pre>/g, (_m, attrs, inner) => {
     return `<pre${attrs}>${inner.replace(/<br>/g, "\n")}</pre>`;
   });
@@ -314,8 +318,12 @@ body {
 .assistant-message .message-body {
   background: var(--bg-assistant);
   border-radius: 12px;
-  padding: 6px 14px;
+  padding: 4px 12px;
   margin-left: 0;
+}
+
+.assistant-message .message-body br + br {
+  display: none;
 }
 
 .message-header {
