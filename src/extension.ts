@@ -155,15 +155,19 @@ async function copyThisSessionCommand(context: vscode.ExtensionContext) {
       return;
     }
 
-    const opts = {
+    const mdOpts = {
       includeToolCalls: true,
       includeToolResults: false,
       includeTimestamps: true,
     };
 
-    lastFormattedMarkdown = formatAsMarkdown(messages, opts);
+    lastFormattedMarkdown = formatAsMarkdown(messages, mdOpts);
     lastFormattedText = formatAsPlainText(messages);
-    lastFormattedHtml = formatAsHtml(messages, opts);
+    lastFormattedHtml = formatAsHtml(messages, {
+      includeToolCalls: true,
+      includeToolResults: true,
+      includeTimestamps: true,
+    });
 
     showHtmlPreview(context);
 
@@ -265,15 +269,15 @@ function showHtmlPreview(context: vscode.ExtensionContext) {
   font-family: var(--font-mono);
   font-size: 12px;
   padding: 8px 16px;
-  border: 1px solid var(--border-color);
-  border-radius: 6px;
-  background: var(--bg-secondary);
-  color: var(--text-primary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg-code);
+  color: var(--text);
   cursor: pointer;
   transition: background 0.15s;
 }
 .controls button:hover {
-  background: var(--bg-message);
+  background: var(--bg-user-bubble);
 }
 </style>
 </body>`

@@ -8,8 +8,9 @@ export interface ParsedMessage {
   content: string;
   model?: string;
   toolName?: string;
+  toolDescription?: string;
   toolInput?: string;
-  toolResult?: string;
+  toolId?: string;
 }
 
 interface JsonlEntry {
@@ -26,6 +27,7 @@ interface ContentBlock {
   type: string;
   text?: string;
   name?: string;
+  id?: string;
   input?: Record<string, unknown>;
   content?: string | ToolResultContent[];
   tool_use_id?: string;
@@ -59,7 +61,6 @@ export function parseTranscript(raw: string): ParsedMessage[] {
       if (typeof content === "string") {
         messages.push({ role: "user", timestamp: ts, content });
       } else if (Array.isArray(content)) {
-        // Could be tool_result array or text array
         for (const block of content) {
           if (block.type === "tool_result") {
             const resultText = extractToolResultText(block);
@@ -68,7 +69,7 @@ export function parseTranscript(raw: string): ParsedMessage[] {
                 role: "tool_result",
                 timestamp: ts,
                 content: resultText,
-                toolName: block.tool_use_id,
+                toolId: block.tool_use_id,
               });
             }
           } else if (block.type === "text" && block.text) {
@@ -87,12 +88,18 @@ export function parseTranscript(raw: string): ParsedMessage[] {
               model: entry.message.model,
             });
           } else if (block.type === "tool_use") {
+            const { description, input: formattedInput } = formatToolInput(
+              block.name,
+              block.input
+            );
             messages.push({
               role: "tool_use",
               timestamp: ts,
               content: "",
               toolName: block.name,
-              toolInput: formatToolInput(block.name, block.input),
+              toolDescription: description,
+              toolInput: formattedInput,
+              toolId: block.id,
             });
           }
         }
@@ -124,23 +131,35 @@ function extractToolResultText(block: ContentBlock): string {
 function formatToolInput(
   name: string | undefined,
   input: Record<string, unknown> | undefined
-): string {
-  if (!input) return "";
-  // Show concise summaries for common tools
+): { description: string; input: string } {
+  if (!input) return { description: "", input: "" };
+
   switch (name) {
-    case "Read":
-      return String(input.file_path ?? "");
-    case "Write":
-      return String(input.file_path ?? "");
-    case "Edit":
-      return String(input.file_path ?? "");
     case "Bash":
-      return String(input.command ?? "");
+      return {
+        description: String(input.description ?? ""),
+        input: String(input.command ?? ""),
+      };
+    case "Read":
+      return { description: String(input.file_path ?? ""), input: "" };
+    case "Write":
+      return { description: String(input.file_path ?? ""), input: "" };
+    case "Edit":
+      return {
+        description: String(input.file_path ?? ""),
+        input: "",
+      };
     case "Glob":
-      return String(input.pattern ?? "");
+      return { description: String(input.pattern ?? ""), input: "" };
     case "Grep":
-      return `${input.pattern ?? ""} ${input.path ?? ""}`.trim();
+      return {
+        description: `${input.pattern ?? ""} ${input.path ?? ""}`.trim(),
+        input: "",
+      };
     default:
-      return JSON.stringify(input, null, 2);
+      return {
+        description: String(input.description ?? ""),
+        input: JSON.stringify(input, null, 2),
+      };
   }
 }
