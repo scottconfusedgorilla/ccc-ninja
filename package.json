@@ -1,0 +1,79 @@
+{
+  "name": "ccc-ninja",
+  "displayName": "Claude Code Copier Ninja",
+  "description": "Parse, format, and copy Claude Code conversation transcripts with one click.",
+  "version": "0.1.0",
+  "publisher": "scottconfusedgorilla",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/scottconfusedgorilla/ccc-ninja"
+  },
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other",
+    "Formatters"
+  ],
+  "keywords": [
+    "claude",
+    "claude-code",
+    "transcript",
+    "copier",
+    "markdown"
+  ],
+  "activationEvents": [],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "cccNinja.copyTranscript",
+        "title": "CCC Ninja: Copy Transcript"
+      },
+      {
+        "command": "cccNinja.copyToClipboard",
+        "title": "CCC Ninja: Copy to Clipboard"
+      },
+      {
+        "command": "cccNinja.saveAsMarkdown",
+        "title": "CCC Ninja: Save as Markdown"
+      },
+      {
+        "command": "cccNinja.saveAsText",
+        "title": "CCC Ninja: Save as Text"
+      }
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "when": "resourceScheme == untitled && cccNinja.isOutputTab",
+          "command": "cccNinja.copyToClipboard",
+          "group": "navigation@1"
+        },
+        {
+          "when": "resourceScheme == untitled && cccNinja.isOutputTab",
+          "command": "cccNinja.saveAsMarkdown",
+          "group": "navigation@2"
+        },
+        {
+          "when": "resourceScheme == untitled && cccNinja.isOutputTab",
+          "command": "cccNinja.saveAsText",
+          "group": "navigation@3"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "lint": "eslint src --ext ts"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "@types/vscode": "^1.85.0",
+    "typescript": "^5.3.0",
+    "@vscode/vsce": "^3.0.0"
+  }
+}
